@@ -1,0 +1,19 @@
+{
+  "name": "room-ai-pro",
+  "version": "1.0.0",
+  "description": "界象策畫所 Pro — AI 空間改造（後台管理版）",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "better-sqlite3": "^11.0.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
