@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>管理後台 — 界象策畫所 Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#F5F0EB;--card:#FFFFFF;--primary:#A68B7B;--primary-dark:#8B7265;--accent:#C4A882;--text:#5A4A3F;--text-light:#8C7B6F;--border:#E0D5CC;--danger:#C17C74;--success:#7B9E87;--shadow:0 2px 20px rgba(90,74,63,.08)}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-logo{width:36px;height:36px;background:var(--primary);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Noto Serif TC',serif;font-size:18px;font-weight:700}
+.topbar h1{font-size:16px;font-weight:600}
+.topbar-right{display:flex;align-items:center;gap:12px;font-size:13px}
+.topbar-right a{color:var(--primary);text-decoration:none;padding:6px 14px;border-radius:8px;transition:.2s}
+.topbar-right a:hover{background:rgba(166,139,123,.1)}
+.btn-logout{background:none;border:1.5px solid var(--border);padding:6px 14px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--text-light);font-family:inherit;transition:.2s}
+.btn-logout:hover{border-color:var(--danger);color:var(--danger)}
+.container{max-width:1200px;margin:0 auto;padding:24px}
+.nav-tabs{display:flex;gap:4px;margin-bottom:24px;background:var(--card);border-radius:12px;padding:4px;box-shadow:var(--shadow)}
+.nav-tab{padding:10px 20px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:500;color:var(--text-light);transition:.2s;border:none;background:none;font-family:inherit}
+.nav-tab.active{background:var(--primary);color:#fff}
+.panel{display:none}.panel.active{display:block}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{background:var(--card);border-radius:12px;padding:20px;box-shadow:var(--shadow)}
+.stat-card .label{font-size:12px;color:var(--text-light);margin-bottom:4px}
+.stat-card .value{font-size:28px;font-weight:700;color:var(--primary);font-family:'Noto Serif TC',serif}
+.table-wrap{background:var(--card);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+.table-header{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.table-header h2{font-size:16px;font-weight:600}
+table{width:100%;border-collapse:collapse}
+th,td{padding:12px 16px;text-align:left;font-size:13px;border-bottom:1px solid var(--border)}
+th{font-weight:600;color:var(--text-light);font-size:12px;text-transform:uppercase;letter-spacing:.5px;background:#FAFAF8}
+td{color:var(--text)}
+tr:last-child td{border-bottom:none}
+.badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-sub{background:#E8F5E9;color:#2E7D32}
+.badge-points{background:#FFF3E0;color:#E65100}
+.badge-none{background:#F5F5F5;color:#9E9E9E}
+.badge-banned{background:#FFEBEE;color:#C62828}
+.badge-admin{background:#E3F2FD;color:#1565C0}
+.action-btn{padding:4px 10px;border:1.5px solid var(--border);border-radius:6px;cursor:pointer;font-size:12px;background:none;color:var(--text);font-family:inherit;transition:.2s;margin-right:4px}
+.action-btn:hover{border-color:var(--primary);color:var(--primary)}
+.action-btn.danger:hover{border-color:var(--danger);color:var(--danger)}
+/* Modal */
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:200;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:var(--card);border-radius:16px;padding:28px;width:90%;max-width:440px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal h3{font-size:18px;margin-bottom:16px;font-weight:600}
+.modal label{display:block;font-size:13px;color:var(--text-light);margin-bottom:4px;margin-top:12px}
+.modal input,.modal select{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;outline:none}
+.modal input:focus,.modal select:focus{border-color:var(--primary)}
+.modal-actions{display:flex;gap:8px;margin-top:20px;justify-content:flex-end}
+.modal-actions button{padding:10px 20px;border-radius:8px;font-size:14px;cursor:pointer;font-family:inherit;border:none;font-weight:500}
+.modal-actions .btn-cancel{background:var(--border);color:var(--text)}
+.modal-actions .btn-save{background:var(--primary);color:#fff}
+/* Settings */
+.settings-form{background:var(--card);border-radius:12px;padding:24px;box-shadow:var(--shadow)}
+.settings-form h2{font-size:16px;margin-bottom:16px}
+.setting-row{display:flex;align-items:center;gap:16px;padding:12px 0;border-bottom:1px solid var(--border)}
+.setting-row:last-child{border-bottom:none}
+.setting-row .info{flex:1}
+.setting-row .info .name{font-size:14px;font-weight:500}
+.setting-row .info .desc{font-size:12px;color:var(--text-light)}
+.setting-row input,.setting-row select{width:260px;padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit}
+.btn-save-settings{padding:12px 28px;background:var(--primary);color:#fff;border:none;border-radius:10px;font-size:14px;cursor:pointer;font-family:inherit;font-weight:600;margin-top:16px}
+/* Log */
+.log-entry{font-size:12px;color:var(--text-light)}
+@media(max-width:768px){.stats{grid-template-columns:1fr 1fr}.setting-row{flex-direction:column;align-items:flex-start;gap:8px}.setting-row input,.setting-row select{width:100%}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-logo">界</div>
+    <h1>管理後台</h1>
+  </div>
+  <div class="topbar-right">
+    <span id="adminName"></span>
+    <a href="/">前往前台</a>
+    <button class="btn-logout" onclick="logout()">登出</button>
+  </div>
+</div>
+<div class="container">
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchPanel('dashboard')">總覽</button>
+    <button class="nav-tab" onclick="switchPanel('users')">用戶管理</button>
+    <button class="nav-tab" onclick="switchPanel('settings')">系統設定</button>
+    <button class="nav-tab" onclick="switchPanel('logs')">操作紀錄</button>
+  </div>
+
+  <!-- Dashboard -->
+  <div class="panel active" id="panelDashboard">
+    <div class="stats" id="statsGrid"></div>
+  </div>
+
+  <!-- Users -->
+  <div class="panel" id="panelUsers">
+    <div class="table-wrap">
+      <div class="table-header"><h2>所有用戶</h2></div>
+      <div style="overflow-x:auto"><table><thead><tr>
+        <th>ID</th><th>帳號</th><th>顯示名稱</th><th>點數</th><th>訂閱</th><th>狀態</th><th>最後登入</th><th>操作</th>
+      </tr></thead><tbody id="usersTbody"></tbody></table></div>
+    </div>
+  </div>
+
+  <!-- Settings -->
+  <div class="panel" id="panelSettings">
+    <div class="settings-form" id="settingsForm"></div>
+  </div>
+
+  <!-- Logs -->
+  <div class="panel" id="panelLogs">
+    <div class="table-wrap">
+      <div class="table-header"><h2>操作紀錄</h2></div>
+      <div style="overflow-x:auto"><table><thead><tr>
+        <th>時間</th><th>用戶</th><th>動作</th><th>扣點</th><th>說明</th>
+      </tr></thead><tbody id="logsTbody"></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Points -->
+<div class="modal-overlay" id="modalPoints">
+  <div class="modal">
+    <h3>調整點數</h3>
+    <p style="font-size:13px;color:var(--text-light)" id="pointsTarget"></p>
+    <label>操作</label>
+    <select id="pointsAction"><option value="add">加點數</option><option value="set">設定點數為</option></select>
+    <label>數量</label>
+    <input type="number" id="pointsAmount" value="10" min="0">
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('modalPoints')">取消</button>
+      <button class="btn-save" onclick="savePoints()">確認</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Subscription -->
+<div class="modal-overlay" id="modalSub">
+  <div class="modal">
+    <h3>設定訂閱</h3>
+    <p style="font-size:13px;color:var(--text-light)" id="subTarget"></p>
+    <label>訂閱類型</label>
+    <select id="subType"><option value="none">無訂閱</option><option value="monthly">月費</option><option value="yearly">年費</option><option value="vip">VIP</option></select>
+    <label>天數</label>
+    <input type="number" id="subDays" value="30" min="1">
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('modalSub')">取消</button>
+      <button class="btn-save" onclick="saveSub()">確認</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Password -->
+<div class="modal-overlay" id="modalPwd">
+  <div class="modal">
+    <h3>重設密碼</h3>
+    <p style="font-size:13px;color:var(--text-light)" id="pwdTarget"></p>
+    <label>新密碼</label>
+    <input type="password" id="newPwd" placeholder="至少 6 個字元">
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('modalPwd')">取消</button>
+      <button class="btn-save" onclick="savePwd()">確認</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const token = localStorage.getItem('token');
+if (!token) { window.location.href = '/login'; }
+let currentUserId = null;
+
+const API = (url, opts = {}) => fetch(url, { ...opts, headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token, ...opts.headers } }).then(async r => { const d = await r.json(); if (!r.ok) throw new Error(d.error); return d; });
+
+// Init
+(async () => {
+  try {
+    const profile = await API('/api/user/profile');
+    if (!profile.is_admin) { window.location.href = '/'; return; }
+    document.getElementById('adminName').textContent = profile.display_name;
+    loadDashboard();
+  } catch { localStorage.removeItem('token'); window.location.href = '/login'; }
+})();
+
+function switchPanel(name) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('panel' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('active');
+  if (name === 'dashboard') loadDashboard();
+  if (name === 'users') loadUsers();
+  if (name === 'settings') loadSettings();
+  if (name === 'logs') loadLogs();
+}
+
+async function loadDashboard() {
+  const d = await API('/api/admin/dashboard');
+  document.getElementById('statsGrid').innerHTML = [
+    ['總用戶', d.totalUsers],
+    ['訂閱中', d.activeSubUsers],
+    ['今日生成', d.todayGens],
+    ['累計生成', d.totalGens],
+    ['累計扣點', d.totalPointsUsed]
+  ].map(([l, v]) => `<div class="stat-card"><div class="label">${l}</div><div class="value">${v}</div></div>`).join('');
+}
+
+async function loadUsers() {
+  const users = await API('/api/admin/users');
+  document.getElementById('usersTbody').innerHTML = users.map(u => {
+    const subBadge = u.sub_type !== 'none' && u.sub_expires && new Date(u.sub_expires) > new Date()
+      ? `<span class="badge badge-sub">${u.sub_type} 至 ${u.sub_expires?.slice(0,10)}</span>`
+      : `<span class="badge badge-none">無</span>`;
+    const statusBadge = u.is_banned ? '<span class="badge badge-banned">停權</span>' : u.is_admin ? '<span class="badge badge-admin">管理員</span>' : '';
+    return `<tr>
+      <td>${u.id}</td><td>${u.username}</td><td>${u.display_name}</td>
+      <td><span class="badge badge-points">${u.points} 點</span></td>
+      <td>${subBadge}</td><td>${statusBadge}</td>
+      <td style="font-size:12px;color:var(--text-light)">${u.last_login || '從未'}</td>
+      <td>
+        <button class="action-btn" onclick="openPoints(${u.id},'${u.username}',${u.points})">點數</button>
+        <button class="action-btn" onclick="openSub(${u.id},'${u.username}')">訂閱</button>
+        <button class="action-btn" onclick="openPwd(${u.id},'${u.username}')">密碼</button>
+        ${!u.is_admin ? `<button class="action-btn ${u.is_banned?'':'danger'}" onclick="toggleBan(${u.id},${u.is_banned?0:1})">${u.is_banned?'解封':'停權'}</button>` : ''}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+async function loadSettings() {
+  const s = await API('/api/admin/settings');
+  const defs = [
+    { key:'gemini_api_key', name:'Gemini API Key', desc:'Google AI API 金鑰', type:'password' },
+    { key:'gemini_model', name:'AI 模型', desc:'Gemini 模型名稱', type:'text' },
+    { key:'points_per_gen', name:'每次生成扣點', desc:'每次 AI 生成消耗的點數', type:'number' },
+    { key:'default_points', name:'註冊贈送點數', desc:'新用戶註冊時贈送的點數', type:'number' },
+    { key:'site_name', name:'網站名稱', desc:'顯示在前台的網站名稱', type:'text' },
+    { key:'allow_register', name:'開放註冊', desc:'是否允許新用戶自行註冊', type:'select', options:['true','false'] }
+  ];
+  document.getElementById('settingsForm').innerHTML = '<h2>系統設定</h2>' + defs.map(d => {
+    const val = s[d.key] || '';
+    let input;
+    if (d.type === 'select') input = `<select id="set_${d.key}">${d.options.map(o => `<option value="${o}" ${val===o?'selected':''}>${o==='true'?'是':'否'}</option>`).join('')}</select>`;
+    else input = `<input type="${d.type}" id="set_${d.key}" value="${d.type==='password'?'':val}" placeholder="${d.type==='password'?(val?'已設定，留空不修改':'未設定'):''}">`;
+    return `<div class="setting-row"><div class="info"><div class="name">${d.name}</div><div class="desc">${d.desc}</div></div>${input}</div>`;
+  }).join('') + '<button class="btn-save-settings" onclick="saveSettings()">儲存設定</button>';
+}
+
+async function loadLogs() {
+  const logs = await API('/api/admin/logs?limit=200');
+  document.getElementById('logsTbody').innerHTML = logs.map(l => `<tr>
+    <td class="log-entry">${l.created_at}</td>
+    <td>${l.display_name || l.username || '—'}</td>
+    <td>${l.action}</td>
+    <td>${l.points_used || 0}</td>
+    <td class="log-entry">${l.detail || ''}</td>
+  </tr>`).join('');
+}
+
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+function openPoints(id, name, pts) {
+  currentUserId = id;
+  document.getElementById('pointsTarget').textContent = `${name}（目前 ${pts} 點）`;
+  document.getElementById('pointsAmount').value = 10;
+  openModal('modalPoints');
+}
+async function savePoints() {
+  await API(`/api/admin/users/${currentUserId}/points`, { method:'PUT', body: JSON.stringify({ amount: parseInt(document.getElementById('pointsAmount').value), action: document.getElementById('pointsAction').value }) });
+  closeModal('modalPoints'); loadUsers();
+}
+
+function openSub(id, name) {
+  currentUserId = id;
+  document.getElementById('subTarget').textContent = name;
+  openModal('modalSub');
+}
+async function saveSub() {
+  await API(`/api/admin/users/${currentUserId}/subscription`, { method:'PUT', body: JSON.stringify({ sub_type: document.getElementById('subType').value, days: parseInt(document.getElementById('subDays').value) }) });
+  closeModal('modalSub'); loadUsers();
+}
+
+function openPwd(id, name) {
+  currentUserId = id;
+  document.getElementById('pwdTarget').textContent = name;
+  document.getElementById('newPwd').value = '';
+  openModal('modalPwd');
+}
+async function savePwd() {
+  await API(`/api/admin/users/${currentUserId}/password`, { method:'PUT', body: JSON.stringify({ password: document.getElementById('newPwd').value }) });
+  closeModal('modalPwd'); alert('密碼已重設');
+}
+
+async function toggleBan(id, ban) {
+  if (!confirm(ban ? '確定要停權此用戶？' : '確定要解除停權？')) return;
+  await API(`/api/admin/users/${id}/ban`, { method:'PUT', body: JSON.stringify({ is_banned: ban }) });
+  loadUsers();
+}
+
+async function saveSettings() {
+  const keys = ['gemini_api_key','gemini_model','points_per_gen','default_points','site_name','allow_register'];
+  const obj = {};
+  keys.forEach(k => {
+    const el = document.getElementById('set_' + k);
+    const val = el.value;
+    if (k === 'gemini_api_key' && !val) return; // skip empty password field
+    obj[k] = val;
+  });
+  await API('/api/admin/settings', { method:'PUT', body: JSON.stringify(obj) });
+  alert('設定已儲存');
+}
+
+function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  window.location.href = '/login';
+}
+</script>
+</body>
+</html>
+
