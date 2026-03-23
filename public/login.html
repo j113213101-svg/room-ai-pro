@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>登入 — 界象策畫所 Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#F5F0EB;--card:#FFFFFF;--primary:#A68B7B;--primary-dark:#8B7265;--accent:#C4A882;--text:#5A4A3F;--text-light:#8C7B6F;--border:#E0D5CC;--danger:#C17C74;--success:#7B9E87;--shadow:0 2px 20px rgba(90,74,63,.08)}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+.logo{text-align:center;margin-bottom:32px}
+.logo-icon{width:56px;height:56px;background:var(--primary);border-radius:14px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-family:'Noto Serif TC',serif;font-size:28px;font-weight:700;margin-bottom:12px}
+.logo h1{font-family:'Noto Serif TC',serif;font-size:24px;color:var(--text);font-weight:700}
+.logo p{color:var(--text-light);font-size:13px;margin-top:4px;letter-spacing:2px}
+.card{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:36px;width:100%;max-width:400px}
+.tabs{display:flex;gap:0;margin-bottom:28px;border-bottom:2px solid var(--border)}
+.tab{flex:1;padding:10px;text-align:center;cursor:pointer;font-size:15px;font-weight:500;color:var(--text-light);border-bottom:2px solid transparent;margin-bottom:-2px;transition:.2s}
+.tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.form{display:none}.form.active{display:block}
+label{display:block;font-size:13px;color:var(--text-light);margin-bottom:6px;margin-top:16px}
+label:first-child{margin-top:0}
+input[type="text"],input[type="password"]{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:15px;font-family:inherit;outline:none;transition:.2s;background:#FAFAF8}
+input:focus{border-color:var(--primary);background:#fff}
+.btn{width:100%;padding:14px;border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;margin-top:24px;transition:.2s;font-family:inherit}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-dark)}
+.btn-primary:disabled{background:var(--border);cursor:not-allowed}
+.error{color:var(--danger);font-size:13px;margin-top:12px;text-align:center;min-height:20px}
+.success{color:var(--success);font-size:13px;margin-top:12px;text-align:center}
+.footer{margin-top:24px;text-align:center;font-size:12px;color:var(--text-light)}
+.footer a{color:var(--primary);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="logo">
+  <div class="logo-icon">界</div>
+  <h1>界象策畫所</h1>
+  <p>AI SPACE REDESIGN PRO</p>
+</div>
+<div class="card">
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('login')">登入</div>
+    <div class="tab" onclick="switchTab('register')">註冊</div>
+  </div>
+  <form class="form active" id="loginForm" onsubmit="handleLogin(event)">
+    <label>帳號</label>
+    <input type="text" id="loginUser" placeholder="輸入帳號" required autocomplete="username">
+    <label>密碼</label>
+    <input type="password" id="loginPass" placeholder="輸入密碼" required autocomplete="current-password">
+    <div class="error" id="loginError"></div>
+    <button class="btn btn-primary" type="submit" id="loginBtn">登入</button>
+  </form>
+  <form class="form" id="registerForm" onsubmit="handleRegister(event)">
+    <label>帳號</label>
+    <input type="text" id="regUser" placeholder="至少 3 個字元" required autocomplete="username">
+    <label>顯示名稱（選填）</label>
+    <input type="text" id="regName" placeholder="其他人看到的名稱" autocomplete="name">
+    <label>密碼</label>
+    <input type="password" id="regPass" placeholder="至少 6 個字元" required autocomplete="new-password">
+    <label>確認密碼</label>
+    <input type="password" id="regPass2" placeholder="再輸入一次密碼" required autocomplete="new-password">
+    <div class="error" id="regError"></div>
+    <button class="btn btn-primary" type="submit" id="regBtn">註冊</button>
+  </form>
+</div>
+<div class="footer">
+  <a href="/">← 返回首頁</a>
+</div>
+<script>
+// Check if already logged in
+const token = localStorage.getItem('token');
+if (token) {
+  fetch('/api/user/profile', { headers: { Authorization: 'Bearer ' + token } })
+    .then(r => { if (r.ok) window.location.href = '/'; });
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach((t, i) => t.classList.toggle('active', (tab === 'login' ? i === 0 : i === 1)));
+  document.getElementById('loginForm').classList.toggle('active', tab === 'login');
+  document.getElementById('registerForm').classList.toggle('active', tab === 'register');
+}
+
+async function handleLogin(e) {
+  e.preventDefault();
+  const btn = document.getElementById('loginBtn');
+  const errEl = document.getElementById('loginError');
+  btn.disabled = true; btn.textContent = '登入中...'; errEl.textContent = '';
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: document.getElementById('loginUser').value, password: document.getElementById('loginPass').value })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+    window.location.href = data.user.is_admin ? '/admin' : '/';
+  } catch (err) {
+    errEl.textContent = err.message;
+  } finally {
+    btn.disabled = false; btn.textContent = '登入';
+  }
+}
+
+async function handleRegister(e) {
+  e.preventDefault();
+  const btn = document.getElementById('regBtn');
+  const errEl = document.getElementById('regError');
+  btn.disabled = true; btn.textContent = '註冊中...'; errEl.textContent = '';
+  const pass = document.getElementById('regPass').value;
+  if (pass !== document.getElementById('regPass2').value) { errEl.textContent = '兩次密碼不一致'; btn.disabled = false; btn.textContent = '註冊'; return; }
+  try {
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: document.getElementById('regUser').value, password: pass, display_name: document.getElementById('regName').value })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+    window.location.href = '/';
+  } catch (err) {
+    errEl.textContent = err.message;
+  } finally {
+    btn.disabled = false; btn.textContent = '註冊';
+  }
+}
+</script>
+</body>
+</html>
