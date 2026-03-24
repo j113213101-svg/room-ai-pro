@@ -231,21 +231,39 @@ async function loadUsers() {
 
 async function loadSettings() {
   const s = await API('/api/admin/settings');
-  const defs = [
+  // Basic settings
+  const basicDefs = [
     { key:'gemini_api_key', name:'Gemini API Key', desc:'Google AI API 金鑰', type:'password' },
-    { key:'gemini_model', name:'AI 模型', desc:'Gemini 模型名稱', type:'text' },
-    { key:'points_per_gen', name:'每次生成扣點', desc:'每次 AI 生成消耗的點數', type:'number' },
     { key:'default_points', name:'註冊贈送點數', desc:'新用戶註冊時贈送的點數', type:'number' },
     { key:'site_name', name:'網站名稱', desc:'顯示在前台的網站名稱', type:'text' },
     { key:'allow_register', name:'開放註冊', desc:'是否允許新用戶自行註冊', type:'select', options:['true','false'] }
   ];
-  document.getElementById('settingsForm').innerHTML = '<h2>系統設定</h2>' + defs.map(d => {
+  let html = '<h2>系統設定</h2>';
+  html += basicDefs.map(d => {
     const val = s[d.key] || '';
     let input;
     if (d.type === 'select') input = `<select id="set_${d.key}">${d.options.map(o => `<option value="${o}" ${val===o?'selected':''}>${o==='true'?'是':'否'}</option>`).join('')}</select>`;
     else input = `<input type="${d.type}" id="set_${d.key}" value="${d.type==='password'?'':val}" placeholder="${d.type==='password'?(val?'已設定，留空不修改':'未設定'):''}">`;
     return `<div class="setting-row"><div class="info"><div class="name">${d.name}</div><div class="desc">${d.desc}</div></div>${input}</div>`;
-  }).join('') + '<button class="btn-save-settings" onclick="saveSettings()">儲存設定</button>';
+  }).join('');
+
+  // Model tiers section
+  const tierLabels = ['基礎版（最便宜）','進階版（中等）','旗艦版（最貴）'];
+  const tierColors = ['#7B9E87','#A68B7B','#C17C74'];
+  html += '<h2 style="margin-top:24px;padding-top:20px;border-top:2px solid var(--border)">AI 模型方案</h2>';
+  html += '<p style="font-size:12px;color:var(--text-light);margin-bottom:12px">設定三種模型等級，用戶可在前台選擇不同等級生成</p>';
+  for (let i = 1; i <= 3; i++) {
+    html += `<div style="background:#FAFAF8;border:1px solid var(--border);border-left:4px solid ${tierColors[i-1]};border-radius:8px;padding:16px;margin-bottom:12px">`;
+    html += `<div style="font-size:14px;font-weight:600;margin-bottom:10px;color:${tierColors[i-1]}">方案 ${i}：${tierLabels[i-1]}</div>`;
+    html += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">`;
+    html += `<div><label style="font-size:12px;color:var(--text-light);display:block;margin-bottom:2px">方案名稱</label><input id="set_model_${i}_name" value="${s['model_'+i+'_name']||''}" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit"></div>`;
+    html += `<div><label style="font-size:12px;color:var(--text-light);display:block;margin-bottom:2px">模型 ID</label><input id="set_model_${i}_id" value="${s['model_'+i+'_id']||''}" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit" placeholder="例如 gemini-2.5-flash"></div>`;
+    html += `<div><label style="font-size:12px;color:var(--text-light);display:block;margin-bottom:2px">每次扣點</label><input type="number" id="set_model_${i}_cost" value="${s['model_'+i+'_cost']||'1'}" min="1" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit"></div>`;
+    html += `<div><label style="font-size:12px;color:var(--text-light);display:block;margin-bottom:2px">說明</label><input id="set_model_${i}_desc" value="${s['model_'+i+'_desc']||''}" style="width:100%;padding:8px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit" placeholder="方案描述"></div>`;
+    html += `</div></div>`;
+  }
+  html += '<button class="btn-save-settings" onclick="saveSettings()">儲存設定</button>';
+  document.getElementById('settingsForm').innerHTML = html;
 }
 
 async function loadLogs() {
@@ -301,10 +319,15 @@ async function toggleBan(id, ban) {
 }
 
 async function saveSettings() {
-  const keys = ['gemini_api_key','gemini_model','points_per_gen','default_points','site_name','allow_register'];
+  const keys = ['gemini_api_key','default_points','site_name','allow_register'];
+  // Add model tier keys
+  for (let i = 1; i <= 3; i++) {
+    keys.push(`model_${i}_name`, `model_${i}_id`, `model_${i}_cost`, `model_${i}_desc`);
+  }
   const obj = {};
   keys.forEach(k => {
     const el = document.getElementById('set_' + k);
+    if (!el) return;
     const val = el.value;
     if (k === 'gemini_api_key' && !val) return; // skip empty password field
     obj[k] = val;
@@ -321,4 +344,3 @@ function logout() {
 </script>
 </body>
 </html>
-
