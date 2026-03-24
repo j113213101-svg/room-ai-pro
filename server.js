@@ -87,17 +87,17 @@ async function initDatabase() {
     gemini_api_key: '',
     // Model tier 1 — 基礎版 (cheapest)
     model_1_name: '基礎版',
-    model_1_id: 'gemini-2.5-flash',
+    model_1_id: 'gemini-2.5-flash-image',
     model_1_cost: '1',
     model_1_desc: '快速生成，適合日常使用',
     // Model tier 2 — 進階版 (mid)
     model_2_name: '進階版',
-    model_2_id: 'gemini-3-flash-preview',
+    model_2_id: 'gemini-3-pro-image-preview',
     model_2_cost: '3',
     model_2_desc: 'Pro 級智能，更精緻的結果',
     // Model tier 3 — 旗艦版 (most expensive)
     model_3_name: '旗艦版',
-    model_3_id: 'gemini-3.1-pro-preview',
+    model_3_id: 'gemini-3.1-flash-image-preview',
     model_3_cost: '5',
     model_3_desc: '最強模型，頂級品質輸出',
     default_points: '3',
@@ -282,7 +282,7 @@ app.post('/api/generate', authMiddleware, async (req, res) => {
     // Determine model tier (default to tier 1)
     const tier = parseInt(req.body.model_tier) || 1;
     const validTier = Math.min(Math.max(tier, 1), 3);
-    const modelId = getSetting(`model_${validTier}_id`) || getSetting('model_1_id') || 'gemini-2.5-flash';
+    const modelId = getSetting(`model_${validTier}_id`) || getSetting('model_1_id') || 'gemini-2.5-flash-image';
     const modelName = getSetting(`model_${validTier}_name`) || `模型 ${validTier}`;
     const cost = parseInt(getSetting(`model_${validTier}_cost`)) || 1;
 
