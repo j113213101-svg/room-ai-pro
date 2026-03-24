@@ -85,8 +85,21 @@ async function initDatabase() {
   // Default settings
   const defaultSettings = {
     gemini_api_key: '',
-    gemini_model: 'gemini-2.0-flash-preview-image-generation',
-    points_per_gen: '1',
+    // Model tier 1 — 基礎版 (cheapest)
+    model_1_name: '基礎版',
+    model_1_id: 'gemini-2.5-flash',
+    model_1_cost: '1',
+    model_1_desc: '快速生成，適合日常使用',
+    // Model tier 2 — 進階版 (mid)
+    model_2_name: '進階版',
+    model_2_id: 'gemini-3-flash-preview',
+    model_2_cost: '3',
+    model_2_desc: 'Pro 級智能，更精緻的結果',
+    // Model tier 3 — 旗艦版 (most expensive)
+    model_3_name: '旗艦版',
+    model_3_id: 'gemini-3.1-pro-preview',
+    model_3_cost: '5',
+    model_3_desc: '最強模型，頂級品質輸出',
     default_points: '3',
     site_name: '界象策畫所 Pro',
     allow_register: 'true'
@@ -243,25 +256,47 @@ app.get('/api/user/profile', authMiddleware, (req, res) => {
   });
 });
 
+// =================== MODEL TIERS API ===================
+app.get('/api/models', authMiddleware, (req, res) => {
+  try {
+    const tiers = [];
+    for (let i = 1; i <= 3; i++) {
+      const name = getSetting(`model_${i}_name`);
+      const id = getSetting(`model_${i}_id`);
+      const cost = parseInt(getSetting(`model_${i}_cost`)) || 1;
+      const desc = getSetting(`model_${i}_desc`) || '';
+      if (id) tiers.push({ tier: i, name, model_id: id, cost, desc });
+    }
+    res.json(tiers);
+  } catch (e) {
+    res.status(500).json({ error: '取得模型列表失敗' });
+  }
+});
+
 // =================== AI GENERATE PROXY ===================
 app.post('/api/generate', authMiddleware, async (req, res) => {
   try {
     const user = req.user;
-    const cost = parseInt(getSetting('points_per_gen')) || 1;
     const hasSub = hasActiveSubscription(user);
 
+    // Determine model tier (default to tier 1)
+    const tier = parseInt(req.body.model_tier) || 1;
+    const validTier = Math.min(Math.max(tier, 1), 3);
+    const modelId = getSetting(`model_${validTier}_id`) || getSetting('model_1_id') || 'gemini-2.5-flash';
+    const modelName = getSetting(`model_${validTier}_name`) || `模型 ${validTier}`;
+    const cost = parseInt(getSetting(`model_${validTier}_cost`)) || 1;
+
     if (!hasSub && user.points < cost) {
-      return res.status(402).json({ error: `點數不足，需要 ${cost} 點，目前剩餘 ${user.points} 點` });
+      return res.status(402).json({ error: `點數不足，${modelName} 需要 ${cost} 點，目前剩餘 ${user.points} 點` });
     }
 
     const apiKey = getSetting('gemini_api_key');
     if (!apiKey) return res.status(500).json({ error: '系統 API Key 未設定，請聯繫管理員' });
 
-    const model = getSetting('gemini_model') || 'gemini-2.0-flash-preview-image-generation';
     const { contents } = req.body;
     if (!contents) return res.status(400).json({ error: '缺少生成內容' });
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${apiKey}`;
     const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -281,11 +316,11 @@ app.post('/api/generate', authMiddleware, async (req, res) => {
       dbRun('UPDATE users SET points = points - ? WHERE id = ?', [cost, user.id]);
     }
     dbRun('INSERT INTO usage_log (user_id, action, points_used, detail) VALUES (?, ?, ?, ?)',
-      [user.id, 'generate', hasSub ? 0 : cost, hasSub ? '訂閱用戶免扣點' : `扣除 ${cost} 點`]);
+      [user.id, 'generate', hasSub ? 0 : cost, hasSub ? `訂閱用戶免扣點 (${modelName})` : `${modelName} 扣除 ${cost} 點`]);
     saveDatabase();
 
     const updated = dbGet('SELECT points FROM users WHERE id = ?', [user.id]);
-    res.json({ ...data, remaining_points: updated.points, subscription_active: hasSub });
+    res.json({ ...data, remaining_points: updated.points, subscription_active: hasSub, model_used: modelName });
   } catch (e) {
     console.error('Gemini API Error:', e);
     res.status(500).json({ error: 'AI 服務連線失敗: ' + e.message });
