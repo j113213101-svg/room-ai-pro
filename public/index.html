@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>界象策畫所 Pro — AI 空間改造</title>
+<title>çè±¡ç­ç«æ Pro â AI ç©ºéæ¹é </title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Serif+TC:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
@@ -144,6 +144,15 @@ body{font-family:'Inter','Noto Serif TC',-apple-system,'PingFang TC','Microsoft 
 .gen-btn{font-family:'Noto Serif TC',serif;font-size:1rem;padding:13px 44px;border-radius:980px;background:linear-gradient(135deg,var(--m-blue),var(--m-lav));border:none;color:#fff;font-weight:600;cursor:pointer;transition:all .3s var(--ease);box-shadow:0 4px 16px rgba(154,172,184,.35);letter-spacing:2px;}
 .gen-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(154,172,184,.45);}
 .gen-btn:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none;}
+/* Model tier selector */
+.model-sel{display:flex;gap:10px;justify-content:center;margin-bottom:18px;flex-wrap:wrap;}
+.model-card{flex:1;min-width:140px;max-width:200px;padding:14px 12px;border:2px solid var(--border);border-radius:var(--r2);cursor:pointer;transition:all .25s var(--ease);background:var(--bg);text-align:center;position:relative;}
+.model-card:hover{border-color:var(--accent);background:var(--accent-l);}
+.model-card.sel{border-color:var(--m-blue);background:var(--m-blue-p);box-shadow:0 2px 12px rgba(154,172,184,.25);}
+.model-card .mc-name{font-family:'Noto Serif TC',serif;font-size:.9rem;font-weight:700;margin-bottom:4px;color:var(--text);}
+.model-card .mc-cost{font-size:.82rem;font-weight:600;color:var(--m-blue);margin-bottom:3px;}
+.model-card .mc-desc{font-size:.7rem;color:var(--text3);line-height:1.4;}
+.model-card .mc-badge{position:absolute;top:-8px;right:-8px;background:linear-gradient(135deg,var(--m-lav),var(--m-rose));color:#fff;font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:10px;}
 .spinner{display:inline-block;width:14px;height:14px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;margin-right:5px;}
 @keyframes sp{to{transform:rotate(360deg);}}
 /* Improved progress */
@@ -168,7 +177,7 @@ body{font-family:'Inter','Noto Serif TC',-apple-system,'PingFang TC','Microsoft 
 .ba-wrap .ba-after{z-index:1;}
 .ba-wrap .ba-before{z-index:2;clip-path:inset(0 50% 0 0);}
 .ba-handle{position:absolute;top:0;bottom:0;width:3px;background:#fff;z-index:3;left:50%;transform:translateX(-50%);box-shadow:0 0 8px rgba(0,0,0,.2);}
-.ba-handle::after{content:'⇔';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:32px;height:32px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--text2);box-shadow:var(--sh);font-weight:700;}
+.ba-handle::after{content:'â';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:32px;height:32px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:var(--text2);box-shadow:var(--sh);font-weight:700;}
 .ba-tags{position:absolute;bottom:8px;z-index:4;display:flex;justify-content:space-between;width:100%;padding:0 10px;pointer-events:none;}
 .ba-tag{background:rgba(255,255,255,.82);backdrop-filter:blur(8px);padding:3px 10px;border-radius:6px;font-size:.62rem;font-weight:600;color:var(--text2);letter-spacing:.5px;}
 .ba-tag.ai{color:var(--m-lav);}
@@ -228,45 +237,46 @@ body{font-family:'Inter','Noto Serif TC',-apple-system,'PingFang TC','Microsoft 
 <body>
 
 <nav class="nav"><div class="nav-in">
-  <div class="brand"><div class="brand-icon">界</div><div><div class="brand-t">界象策畫所</div><div class="brand-s">AI SPACE REDESIGN</div></div></div>
+  <div class="brand"><div class="brand-icon">ç</div><div><div class="brand-t">çè±¡ç­ç«æ</div><div class="brand-s">AI SPACE REDESIGN</div></div></div>
   <div class="nav-r" style="position:relative;">
     <span id="userBadge" style="font-size:.75rem;color:var(--text2);background:var(--bg2);padding:4px 12px;border-radius:20px;display:none;"></span>
-    <a href="https://line.me/R/ti/p/@212erpmv?oat_content=url&ts=03221928" target="_blank" class="btn btn-line btn-sm">LINE 聯繫</a>
-    <a href="https://api.payuni.com.tw/api/uop/receive_info/2/1/U00565891/oJjnzf9yB6YGME9MK1xv" target="_blank" class="btn btn-sponsor btn-sm">贊助支持</a>
-    <button class="btn btn-t btn-sm" onclick="document.getElementById('logEl').classList.toggle('on')">紀錄</button>
-    <button class="btn btn-s btn-sm" onclick="resetAll()">重新開始</button>
-    <a href="/admin" class="btn btn-t btn-sm" id="adminLink" style="display:none">後台</a>
-    <button class="btn btn-t btn-sm" onclick="doLogout()">登出</button>
+    <a href="https://line.me/R/ti/p/@212erpmv?oat_content=url&ts=03221928" target="_blank" class="btn btn-line btn-sm">LINE è¯ç¹«</a>
+    <a href="https://api.payuni.com.tw/api/uop/receive_info/2/1/U00565891/oJjnzf9yB6YGME9MK1xv" target="_blank" class="btn btn-sponsor btn-sm">è´å©æ¯æ</a>
+    <button class="btn btn-t btn-sm" onclick="document.getElementById('logEl').classList.toggle('on')">ç´é</button>
+    <button class="btn btn-s btn-sm" onclick="resetAll()">éæ°éå§</button>
+    <a href="/admin" class="btn btn-t btn-sm" id="adminLink" style="display:none">å¾å°</a>
+    <button class="btn btn-t btn-sm" onclick="doLogout()">ç»åº</button>
   </div>
 </div></nav>
 
 <div class="wrap">
-  <div class="hero"><h2>空間，由你重新定義</h2><p>上傳已標記的房間照片，指定每個圈選區域的處理方式，讓 AI 為你完成空間改造</p></div>
+  <div class="hero"><h2>ç©ºéï¼ç±ä½ éæ°å®ç¾©</h2><p>ä¸å³å·²æ¨è¨çæ¿éç§çï¼æå®æ¯ååé¸ååçèçæ¹å¼ï¼è® AI çºä½ å®æç©ºéæ¹é </p></div>
 
   <div class="steps">
-    <div class="stp act" id="s1"><div class="stp-d">1</div><span class="stp-l">上傳照片</span></div><div class="stp-ln"></div>
-    <div class="stp" id="s2"><div class="stp-d">2</div><span class="stp-l">設定動作</span></div><div class="stp-ln"></div>
-    <div class="stp" id="s3"><div class="stp-d">3</div><span class="stp-l">AI 生成</span></div>
+    <div class="stp act" id="s1"><div class="stp-d">1</div><span class="stp-l">ä¸å³ç§ç</span></div><div class="stp-ln"></div>
+    <div class="stp" id="s2"><div class="stp-d">2</div><span class="stp-l">è¨­å®åä½</span></div><div class="stp-ln"></div>
+    <div class="stp" id="s3"><div class="stp-d">3</div><span class="stp-l">AI çæ</span></div>
   </div>
 
   <div class="upload" id="upA" onclick="document.getElementById('fIn').click()">
-    <div class="upload-ic">📷</div><h3>上傳已標記的房間照片</h3><p>照片上已用手機畫好圈選標記 · JPG / PNG / WEBP · 可多選</p>
+    <div class="upload-ic">ð·</div><h3>ä¸å³å·²æ¨è¨çæ¿éç§ç</h3><p>ç§çä¸å·²ç¨ææ©ç«å¥½åé¸æ¨è¨ Â· JPG / PNG / WEBP Â· å¯å¤é¸</p>
     <input type="file" id="fIn" accept="image/*" multiple style="display:none" onchange="handleUp(event)">
   </div>
 
   <div class="photos" id="pList"></div>
 
   <div class="gen" id="genSec" style="display:none">
-    <p>點擊照片上的圈選位置設定動作，即可開始 AI 改造</p>
-    <div class="prog-area" id="progArea"><div class="prog-track"><div class="prog-fill" id="pb"></div></div><div class="prog-info"><span id="pt">準備中…</span><span class="prog-pct" id="pPct">0%</span></div></div>
-    <button class="gen-btn" id="genBtn" onclick="genAll()">開始生成</button>
+    <p>é»æç§çä¸çåé¸ä½ç½®è¨­å®åä½ï¼å³å¯éå§ AI æ¹é </p>
+    <div class="model-sel" id="modelSel"></div>
+    <div class="prog-area" id="progArea"><div class="prog-track"><div class="prog-fill" id="pb"></div></div><div class="prog-info"><span id="pt">æºåä¸­â¦</span><span class="prog-pct" id="pPct">0%</span></div></div>
+    <button class="gen-btn" id="genBtn" onclick="genAll()">éå§çæ</button>
   </div>
 
   <div class="res-sec" id="resSec" style="display:none">
-    <h2>生成結果 <span class="res-ct" id="resCt"></span></h2>
+    <h2>çæçµæ <span class="res-ct" id="resCt"></span></h2>
     <div class="res-grid" id="resGrid"></div>
     <div style="text-align:center;margin-top:16px;display:flex;justify-content:center;gap:8px;flex-wrap:wrap;">
-      <button class="btn btn-a" style="padding:9px 24px;border-radius:980px;" onclick="dlAll()">一鍵下載全部</button>
+      <button class="btn btn-a" style="padding:9px 24px;border-radius:980px;" onclick="dlAll()">ä¸éµä¸è¼å¨é¨</button>
     </div>
   </div>
 
@@ -275,30 +285,30 @@ body{font-family:'Inter','Noto Serif TC',-apple-system,'PingFang TC','Microsoft 
 
 <!-- FOOTER -->
 <div class="footer">
-  <div class="footer-brand">界象策畫所</div>
-  <div class="footer-sub">AI SPACE REDESIGN — 讓每個空間都成為理想的樣子</div>
+  <div class="footer-brand">çè±¡ç­ç«æ</div>
+  <div class="footer-sub">AI SPACE REDESIGN â è®æ¯åç©ºéé½æçºçæ³çæ¨£å­</div>
   <div class="footer-links">
-    <a href="https://line.me/R/ti/p/@212erpmv?oat_content=url&ts=03221928" target="_blank" class="btn btn-line">LINE 聯繫我們</a>
-    <a href="https://api.payuni.com.tw/api/uop/receive_info/2/1/U00565891/oJjnzf9yB6YGME9MK1xv" target="_blank" class="btn btn-sponsor">贊助支持</a>
+    <a href="https://line.me/R/ti/p/@212erpmv?oat_content=url&ts=03221928" target="_blank" class="btn btn-line">LINE è¯ç¹«æå</a>
+    <a href="https://api.payuni.com.tw/api/uop/receive_info/2/1/U00565891/oJjnzf9yB6YGME9MK1xv" target="_blank" class="btn btn-sponsor">è´å©æ¯æ</a>
   </div>
 </div>
 
 <!-- REFINE -->
 <div class="ref-ov" id="refOv">
   <div class="ref-box">
-    <div class="ref-head"><h3>微調結果</h3><div style="display:flex;gap:6px;"><button class="btn btn-a btn-sm" id="refGenBtn" onclick="refGen()">重新生成</button><button class="btn btn-s btn-sm" onclick="closeRef()">關閉</button></div></div>
+    <div class="ref-head"><h3>å¾®èª¿çµæ</h3><div style="display:flex;gap:6px;"><button class="btn btn-a btn-sm" id="refGenBtn" onclick="refGen()">éæ°çæ</button><button class="btn btn-s btn-sm" onclick="closeRef()">éé</button></div></div>
     <div class="ref-prog" id="refProg"><div class="prog-track"><div class="prog-fill" id="refPb" style="width:0%"></div></div></div>
     <div class="ref-body">
       <div class="ref-img" id="refIA">
         <img id="refImg" draggable="false">
         <div class="tool-float" id="refTool">
-          <button class="tf-btn on" onclick="setRefTool('point',this)">📌 點選</button>
-          <button class="tf-btn" onclick="setRefTool('brush',this)">🖌 塗抹</button>
-          <div class="brush-sz" id="refBsz" style="display:none;"><span>大小</span><input type="range" min="5" max="40" value="15" id="refBs"><span id="refBsL">15</span></div>
+          <button class="tf-btn on" onclick="setRefTool('point',this)">ð é»é¸</button>
+          <button class="tf-btn" onclick="setRefTool('brush',this)">ð å¡æ¹</button>
+          <div class="brush-sz" id="refBsz" style="display:none;"><span>å¤§å°</span><input type="range" min="5" max="40" value="15" id="refBs"><span id="refBsL">15</span></div>
         </div>
         <canvas class="draw-canvas" id="refCanvas" style="display:none;"></canvas>
       </div>
-      <div class="ref-pn" id="refPn"><h4>在 AI 結果上標記要微調的區域</h4><div id="refTasks"></div></div>
+      <div class="ref-pn" id="refPn"><h4>å¨ AI çµæä¸æ¨è¨è¦å¾®èª¿çåå</h4><div id="refTasks"></div></div>
     </div>
   </div>
 </div>
@@ -315,7 +325,7 @@ upA.addEventListener('dragover',e=>{e.preventDefault();upA.style.borderColor='va
 upA.addEventListener('dragleave',e=>{e.preventDefault();upA.style.borderColor='';});
 upA.addEventListener('drop',e=>{e.preventDefault();upA.style.borderColor='';const f=[...e.dataTransfer.files].filter(f=>f.type.startsWith('image/'));if(f.length)addP(f);});
 function handleUp(e){const f=[...e.target.files];if(f.length)addP(f);e.target.value='';}
-function addP(files){let n=0;files.forEach(file=>{const r=new FileReader();r.onload=ev=>{photos.push({id:Date.now()+Math.random(),file,dataUrl:ev.target.result,tasks:[],tool:'point',brushPaths:[]});n++;if(n===files.length){renderAll();toast(n+' 張照片已上傳','success');}};r.readAsDataURL(file);});}
+function addP(files){let n=0;files.forEach(file=>{const r=new FileReader();r.onload=ev=>{photos.push({id:Date.now()+Math.random(),file,dataUrl:ev.target.result,tasks:[],tool:'point',brushPaths:[]});n++;if(n===files.length){renderAll();toast(n+' å¼µç§çå·²ä¸å³','success');}};r.readAsDataURL(file);});}
 
 // RENDER
 function renderAll(){
@@ -323,21 +333,21 @@ function renderAll(){
   photos.forEach((p,pi)=>{
     const card=document.createElement('div');card.className='pcard';
     card.innerHTML=`
-      <div class="pc-top"><div><span class="pc-name">${p.file.name}</span><span class="pc-meta">${p.tasks.length} 個標記</span></div><div style="display:flex;gap:4px;"><button class="btn btn-t btn-sm" onclick="clearT(${pi})">清空</button><button class="btn btn-t btn-sm" style="color:var(--rc)" onclick="rmP(${pi})">移除</button></div></div>
+      <div class="pc-top"><div><span class="pc-name">${p.file.name}</span><span class="pc-meta">${p.tasks.length} åæ¨è¨</span></div><div style="display:flex;gap:4px;"><button class="btn btn-t btn-sm" onclick="clearT(${pi})">æ¸ç©º</button><button class="btn btn-t btn-sm" style="color:var(--rc)" onclick="rmP(${pi})">ç§»é¤</button></div></div>
       <div class="pc-body">
         <div class="img-area" id="ia${pi}">
           <img src="${p.dataUrl}" id="pm${pi}" draggable="false">
           <div class="tool-float" id="tf${pi}">
-            <button class="tf-btn on" data-t="point" onclick="setPhTool(${pi},'point',this)">📌 點選</button>
-            <button class="tf-btn" data-t="brush" onclick="setPhTool(${pi},'brush',this)">🖌 塗抹</button>
-            <button class="tf-btn" data-t="rect" onclick="setPhTool(${pi},'rect',this)">▭ 矩形</button>
-            <div class="brush-sz" id="bsz${pi}" style="display:none;"><span>大小</span><input type="range" min="5" max="40" value="15" id="bs${pi}"><span id="bsl${pi}">15</span></div>
+            <button class="tf-btn on" data-t="point" onclick="setPhTool(${pi},'point',this)">ð é»é¸</button>
+            <button class="tf-btn" data-t="brush" onclick="setPhTool(${pi},'brush',this)">ð å¡æ¹</button>
+            <button class="tf-btn" data-t="rect" onclick="setPhTool(${pi},'rect',this)">â­ ç©å½¢</button>
+            <div class="brush-sz" id="bsz${pi}" style="display:none;"><span>å¤§å°</span><input type="range" min="5" max="40" value="15" id="bs${pi}"><span id="bsl${pi}">15</span></div>
           </div>
           <canvas class="draw-canvas" id="cv${pi}"></canvas>
           <svg class="line-svg" id="sv${pi}"></svg>
-          ${p.tasks.length===0?'<div class="tip">點擊或塗抹照片上圈起來的位置</div>':''}
+          ${p.tasks.length===0?'<div class="tip">é»ææå¡æ¹ç§çä¸åèµ·ä¾çä½ç½®</div>':''}
         </div>
-        <div class="panel"><div class="pn-hdr"><h4>動作設定</h4><p>在照片上標記圈選區域</p></div><div class="pn-body" id="tk${pi}">${p.tasks.length===0?'<div class="pn-empty">尚未放置標記</div>':''}</div></div>
+        <div class="panel"><div class="pn-hdr"><h4>åä½è¨­å®</h4><p>å¨ç§çä¸æ¨è¨åé¸åå</p></div><div class="pn-body" id="tk${pi}">${p.tasks.length===0?'<div class="pn-empty">å°æªæ¾ç½®æ¨è¨</div>':''}</div></div>
       </div>`;
     el.appendChild(card);
     setTimeout(()=>{initCanvas(pi);renderPins(pi);renderTasks(pi);renderLines(pi);},50);
@@ -413,11 +423,11 @@ function renderPins(pi){const a=document.getElementById('ia'+pi);a.querySelector
 
 function renderLines(pi){const s=document.getElementById('sv'+pi);s.innerHTML='';photos[pi].tasks.forEach((t,ti)=>{if(t.mode==='replace'&&t.replaceDataUrl){const l=document.createElementNS('http://www.w3.org/2000/svg','line');l.setAttribute('x1',t.x+'%');l.setAttribute('y1',t.y+'%');l.setAttribute('x2','100%');l.setAttribute('y2',((ti+.5)/photos[pi].tasks.length*100)+'%');l.setAttribute('stroke','var(--gc)');l.setAttribute('stroke-width','1.5');l.setAttribute('stroke-dasharray','5,4');l.setAttribute('opacity','.4');s.appendChild(l);}});}
 
-function renderTasks(pi){const el=document.getElementById('tk'+pi),tasks=photos[pi].tasks;if(!tasks.length){el.innerHTML='<div class="pn-empty">尚未放置標記</div>';return;}
-  el.innerHTML=tasks.map((t,ti)=>`<div class="task" id="t${pi}_${ti}"><div class="task-hdr"><div class="task-badge"><span class="task-n ${t.mode}">${ti+1}</span><span class="task-title">標記 ${ti+1} <span style="font-size:.62rem;color:var(--text3);font-weight:400">${{point:'點選',brush:'塗抹',rect:'矩形'}[t.type]||''}</span></span></div><button class="task-x" onclick="delT(${pi},${ti})">✕</button></div><div class="seg"><button class="seg-o ${t.mode==='remove'?'sr':''}" onclick="setM(${pi},${ti},'remove')">清除</button><button class="seg-o ${t.mode==='replace'?'sg':''}" onclick="setM(${pi},${ti},'replace')">更換</button><button class="seg-o ${t.mode==='blank'?'sb':''}" onclick="setM(${pi},${ti},'blank')">留白</button></div>${t.mode==='replace'?`<div class="rep-sec"><input class="rep-in" type="text" placeholder="要換成什麼？例如：白色書櫃" value="${t.replaceText||''}" oninput="photos[${pi}].tasks[${ti}].replaceText=this.value"><div class="rep-row"><label class="rep-lb">上傳參考圖<input type="file" accept="image/*" style="display:none" onchange="upR(${pi},${ti},event)"></label>${t.replaceDataUrl?`<img class="rep-th" src="${t.replaceDataUrl}">`:'<span style="font-size:.66rem;color:var(--text3)">可選</span>'}</div></div>`:''}</div>`).join('');}
+function renderTasks(pi){const el=document.getElementById('tk'+pi),tasks=photos[pi].tasks;if(!tasks.length){el.innerHTML='<div class="pn-empty">å°æªæ¾ç½®æ¨è¨</div>';return;}
+  el.innerHTML=tasks.map((t,ti)=>`<div class="task" id="t${pi}_${ti}"><div class="task-hdr"><div class="task-badge"><span class="task-n ${t.mode}">${ti+1}</span><span class="task-title">æ¨è¨ ${ti+1} <span style="font-size:.62rem;color:var(--text3);font-weight:400">${{point:'é»é¸',brush:'å¡æ¹',rect:'ç©å½¢'}[t.type]||''}</span></span></div><button class="task-x" onclick="delT(${pi},${ti})">â</button></div><div class="seg"><button class="seg-o ${t.mode==='remove'?'sr':''}" onclick="setM(${pi},${ti},'remove')">æ¸é¤</button><button class="seg-o ${t.mode==='replace'?'sg':''}" onclick="setM(${pi},${ti},'replace')">æ´æ</button><button class="seg-o ${t.mode==='blank'?'sb':''}" onclick="setM(${pi},${ti},'blank')">çç½</button></div>${t.mode==='replace'?`<div class="rep-sec"><input class="rep-in" type="text" placeholder="è¦ææä»éº¼ï¼ä¾å¦ï¼ç½è²æ¸æ«" value="${t.replaceText||''}" oninput="photos[${pi}].tasks[${ti}].replaceText=this.value"><div class="rep-row"><label class="rep-lb">ä¸å³åèå<input type="file" accept="image/*" style="display:none" onchange="upR(${pi},${ti},event)"></label>${t.replaceDataUrl?`<img class="rep-th" src="${t.replaceDataUrl}">`:'<span style="font-size:.66rem;color:var(--text3)">å¯é¸</span>'}</div></div>`:''}</div>`).join('');}
 
 function setM(pi,ti,m){photos[pi].tasks[ti].mode=m;if(m!=='replace'){photos[pi].tasks[ti].replaceText='';photos[pi].tasks[ti].replaceDataUrl=null;}renderPins(pi);renderTasks(pi);renderLines(pi);}
-function upR(pi,ti,e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{photos[pi].tasks[ti].replaceDataUrl=ev.target.result;renderTasks(pi);renderLines(pi);toast('參考圖已設定','success');};r.readAsDataURL(f);}
+function upR(pi,ti,e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{photos[pi].tasks[ti].replaceDataUrl=ev.target.result;renderTasks(pi);renderLines(pi);toast('åèåå·²è¨­å®','success');};r.readAsDataURL(f);}
 function delT(pi,ti){const t=photos[pi].tasks[ti];if(t.type==='brush'&&t.pathIdx!==undefined)photos[pi].brushPaths.splice(t.pathIdx,1);photos[pi].tasks.splice(ti,1);renderPins(pi);renderTasks(pi);renderLines(pi);redrawBrush(pi);updS();}
 function clearT(pi){photos[pi].tasks=[];photos[pi].brushPaths=[];renderPins(pi);renderTasks(pi);renderLines(pi);const cv=document.getElementById('cv'+pi);if(cv)cv.getContext('2d').clearRect(0,0,cv.width,cv.height);updS();}
 function rmP(pi){photos.splice(pi,1);renderAll();}
@@ -434,23 +444,51 @@ let currentUser=null;
     currentUser=await r.json();
     const badge=document.getElementById('userBadge');
     badge.style.display='inline';
-    badge.textContent=currentUser.has_subscription?`${currentUser.display_name} | 訂閱中`:`${currentUser.display_name} | ${currentUser.points} 點`;
+    badge.textContent=currentUser.has_subscription?`${currentUser.display_name} | è¨é±ä¸­`:`${currentUser.display_name} | ${currentUser.points} é»`;
     if(currentUser.is_admin)document.getElementById('adminLink').style.display='inline-flex';
   }catch{localStorage.removeItem('token');window.location.href='/login';}
 })();
 function doLogout(){localStorage.removeItem('token');localStorage.removeItem('user');window.location.href='/login';}
+
+// Model tiers
+let modelTiers=[];
+let selectedTier=1;
+async function loadModels(){
+  try{
+    const r=await fetch('/api/models',{headers:{Authorization:'Bearer '+authToken}});
+    if(!r.ok)return;
+    modelTiers=await r.json();
+    renderModelSel();
+  }catch(e){console.error('Load models failed',e);}
+}
+function renderModelSel(){
+  const el=document.getElementById('modelSel');
+  if(!el||!modelTiers.length)return;
+  const badges=['','','\u2728 \u63a8\u85a6'];
+  el.innerHTML=modelTiers.map((m,i)=>{
+    const isSel=m.tier===selectedTier;
+    return `<div class="model-card${isSel?' sel':''}" onclick="pickTier(${m.tier})">
+      ${badges[i]?`<div class="mc-badge">${badges[i]}</div>`:''}
+      <div class="mc-name">${m.name}</div>
+      <div class="mc-cost">${m.cost} \u9ede / \u6b21</div>
+      <div class="mc-desc">${m.desc}</div>
+    </div>`;
+  }).join('');
+}
+function pickTier(t){selectedTier=t;renderModelSel();}
+if(authToken)loadModels();
 
 function buildPrompt(photo,isRef=false){
   let p='You are an expert AI interior design photo editor.\n';
   p+=isRef?'The user wants to refine this AI-generated room photo.\n':'The user drew pink/red circles on this room photo to mark items.\n';
   p+='Process ONLY the marked areas:\n\n';
   photo.tasks.forEach((t,i)=>{
-    const pos=`(~${Math.round(t.x)}% left, ${Math.round(t.y)}% top${t.type==='rect'?`, rect area ${Math.round(t.rw)}%×${Math.round(t.rh)}%`:''})`;
+    const pos=`(~${Math.round(t.x)}% left, ${Math.round(t.y)}% top${t.type==='rect'?`, rect area ${Math.round(t.rw)}%Ã${Math.round(t.rh)}%`:''})`;
     if(t.mode==='remove')p+=`#${i+1}${pos}: [REMOVE] Remove object, fill with surrounding background seamlessly.\n`;
     else if(t.mode==='replace'){const w=t.replaceText||'matching furniture';p+=`#${i+1}${pos}: [REPLACE with "${w}"] Replace with "${w}", match perspective & lighting.${t.replaceDataUrl?' Use reference image.':''}\n`;}
     else p+=`#${i+1}${pos}: [CLEAR] Remove all items, leave clean wall/floor.\n`;
   });
-  p+='\nCRITICAL:\n1. REMOVE ALL pink/red marker lines — zero traces in output\n2. EVERY unmarked area must be PIXEL-PERFECT identical — same exact colors, textures, positions\n3. Pay extreme attention to preserving exact colors of ALL untouched furniture, walls, floors\n4. Edited areas blend naturally with surroundings\n5. Output one complete high-quality room photo\n';
+  p+='\nCRITICAL:\n1. REMOVE ALL pink/red marker lines â zero traces in output\n2. EVERY unmarked area must be PIXEL-PERFECT identical â same exact colors, textures, positions\n3. Pay extreme attention to preserving exact colors of ALL untouched furniture, walls, floors\n4. Edited areas blend naturally with surroundings\n5. Output one complete high-quality room photo\n';
   return p;
 }
 
@@ -459,44 +497,44 @@ async function callAPI(photo,isRef=false){
   const b64=photo.dataUrl.split(',')[1],mime=photo.dataUrl.match(/data:(.*?);/)?.[1]||'image/jpeg';
   parts.push({inlineData:{mimeType:mime,data:b64}});
   photo.tasks.forEach((t,i)=>{if(t.mode==='replace'&&t.replaceDataUrl){parts.push({text:`Reference for #${i+1}:`});const rb=t.replaceDataUrl.split(',')[1],rm=t.replaceDataUrl.match(/data:(.*?);/)?.[1]||'image/jpeg';parts.push({inlineData:{mimeType:rm,data:rb}});}});
-  log('呼叫 AI 生成…');
-  const res=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken},body:JSON.stringify({contents:[{parts}]})});
-  if(!res.ok){const e=await res.json().catch(()=>({error:'未知錯誤'}));log(`錯誤: ${e.error}`,'error');throw new Error(e.error);}
-  const data=await res.json();log('回應成功','success');
+  log('å¼å« AI çæâ¦');
+  const res=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+authToken},body:JSON.stringify({contents:[{parts}],model_tier:selectedTier})});
+  if(!res.ok){const e=await res.json().catch(()=>({error:'æªç¥é¯èª¤'}));log(`é¯èª¤: ${e.error}`,'error');throw new Error(e.error);}
+  const data=await res.json();log('åææå','success');
   // Update points display
   if(data.remaining_points!==undefined){
     const badge=document.getElementById('userBadge');
-    badge.textContent=data.subscription_active?`${currentUser.display_name} | 訂閱中`:`${currentUser.display_name} | ${data.remaining_points} 點`;
+    badge.textContent=data.subscription_active?`${currentUser.display_name} | è¨é±ä¸­`:`${currentUser.display_name} | ${data.remaining_points} é»`;
     currentUser.points=data.remaining_points;
   }
   if(data.candidates?.[0]?.content?.parts)for(const part of data.candidates[0].content.parts){if(part.text)log(`AI: ${part.text.substring(0,80)}`);if(part.inlineData)return `data:${part.inlineData.mimeType||'image/png'};base64,${part.inlineData.data}`;}
-  throw new Error('回應中沒有圖片');
+  throw new Error('åæä¸­æ²æåç');
 }
 
 // GENERATE
 async function genAll(){
-  if(!authToken){toast('請先登入','error');window.location.href='/login';return;}
-  const proc=photos.filter(p=>p.tasks.length>0);if(!proc.length){toast('請先放置標記','error');return;}
-  const btn=document.getElementById('genBtn');btn.disabled=true;btn.innerHTML='<span class="spinner"></span>生成中…';
+  if(!authToken){toast('è«åç»å¥','error');window.location.href='/login';return;}
+  const proc=photos.filter(p=>p.tasks.length>0);if(!proc.length){toast('è«åæ¾ç½®æ¨è¨','error');return;}
+  const btn=document.getElementById('genBtn');btn.disabled=true;btn.innerHTML='<span class="spinner"></span>çæä¸­â¦';
   const pa=document.getElementById('progArea'),pb=document.getElementById('pb'),pt=document.getElementById('pt'),pp=document.getElementById('pPct');
   pa.classList.add('on');
   const results=[];
   for(let i=0;i<proc.length;i++){
-    const pct=Math.round((i/proc.length)*100);pb.style.width=pct+'%';pp.textContent=pct+'%';pt.textContent=`處理 ${i+1}/${proc.length}：${proc[i].file.name}`;
+    const pct=Math.round((i/proc.length)*100);pb.style.width=pct+'%';pp.textContent=pct+'%';pt.textContent=`èç ${i+1}/${proc.length}ï¼${proc[i].file.name}`;
     try{const url=await callAPI(proc[i]);results.push({name:proc[i].file.name,orig:proc[i].dataUrl,result:url});}
-    catch(e){results.push({name:proc[i].file.name,orig:proc[i].dataUrl,result:proc[i].dataUrl,fail:true});toast(proc[i].file.name+' 失敗','error');}
+    catch(e){results.push({name:proc[i].file.name,orig:proc[i].dataUrl,result:proc[i].dataUrl,fail:true});toast(proc[i].file.name+' å¤±æ','error');}
     const pct2=Math.round(((i+1)/proc.length)*100);pb.style.width=pct2+'%';pp.textContent=pct2+'%';
   }
-  pt.textContent='完成！';
-  showRes(results);btn.disabled=false;btn.innerHTML='開始生成';
+  pt.textContent='å®æï¼';
+  showRes(results);btn.disabled=false;btn.innerHTML='éå§çæ';
   setTimeout(()=>{pa.classList.remove('on');pb.style.width='0%';},2000);
-  updS(3);toast(`完成 ${results.filter(r=>!r.fail).length}/${proc.length} 張`,'success');
+  updS(3);toast(`å®æ ${results.filter(r=>!r.fail).length}/${proc.length} å¼µ`,'success');
   document.getElementById('resSec').scrollIntoView({behavior:'smooth'});
 }
 
 // RESULTS with BA slider
 function showRes(results){
-  document.getElementById('resSec').style.display='block';document.getElementById('resCt').textContent=results.length+' 張';
+  document.getElementById('resSec').style.display='block';document.getElementById('resCt').textContent=results.length+' å¼µ';
   const grid=document.getElementById('resGrid');
   grid.innerHTML=results.map((r,i)=>`
     <div class="ba-card">
@@ -504,16 +542,16 @@ function showRes(results){
         <img class="ba-after" src="${r.result}">
         <img class="ba-before" src="${r.orig}" id="bab${i}">
         <div class="ba-handle" id="bah${i}"></div>
-        <div class="ba-tags"><div class="ba-tag">原圖</div><div class="ba-tag ai">AI 結果</div></div>
+        <div class="ba-tags"><div class="ba-tag">åå</div><div class="ba-tag ai">AI çµæ</div></div>
       </div>
       <div class="ba-bot">
-        <div><span class="ba-name">${r.name}</span>${r.fail?'<span class="ba-fail">處理失敗</span>':''}</div>
+        <div><span class="ba-name">${r.name}</span>${r.fail?'<span class="ba-fail">èçå¤±æ</span>':''}</div>
         <div style="display:flex;gap:5px;align-items:center;">
-          ${!r.fail?`<button class="refine-b" onclick="openRef(${i})">微調</button>`:''}
-          <button class="btn btn-t btn-sm" onclick="showModal(window._res[${i}].orig)">原圖</button>
-          <button class="btn btn-t btn-sm" onclick="showModal(window._res[${i}].result)">AI圖</button>
-          <button class="btn btn-a btn-sm" onclick="dl(${i},'result')">下載 AI</button>
-          <button class="btn btn-s btn-sm" onclick="dl(${i},'ba')">下載 BA</button>
+          ${!r.fail?`<button class="refine-b" onclick="openRef(${i})">å¾®èª¿</button>`:''}
+          <button class="btn btn-t btn-sm" onclick="showModal(window._res[${i}].orig)">åå</button>
+          <button class="btn btn-t btn-sm" onclick="showModal(window._res[${i}].result)">AIå</button>
+          <button class="btn btn-a btn-sm" onclick="dl(${i},'result')">ä¸è¼ AI</button>
+          <button class="btn btn-s btn-sm" onclick="dl(${i},'ba')">ä¸è¼ BA</button>
         </div>
       </div>
     </div>`).join('');
@@ -529,22 +567,22 @@ function baMove(e,i){if(!baActive)return;const w=document.getElementById('baw'+i
 // Download
 function dl(i,type){
   const r=window._res[i];
-  if(type==='result'){const a=document.createElement('a');a.href=r.result;a.download='界象_AI_'+r.name.replace(/\.[^.]+$/,'')+'.png';a.click();toast('已下載 AI 圖','success');}
+  if(type==='result'){const a=document.createElement('a');a.href=r.result;a.download='çè±¡_AI_'+r.name.replace(/\.[^.]+$/,'')+'.png';a.click();toast('å·²ä¸è¼ AI å','success');}
   else{// BA composite
     const cv=document.createElement('canvas'),img1=new Image(),img2=new Image();
     img1.crossOrigin='anonymous';img2.crossOrigin='anonymous';
-    img1.onload=()=>{img2.onload=()=>{cv.width=img1.width*2+4;cv.height=img1.height;const cx=cv.getContext('2d');cx.drawImage(img1,0,0);cx.fillStyle='#fff';cx.fillRect(img1.width,0,4,cv.height);cx.drawImage(img2,img1.width+4,0,img1.width,img1.height);cx.fillStyle='rgba(0,0,0,0.5)';cx.font='bold 16px Inter';cx.fillText('原圖',10,img1.height-10);cx.fillText('AI 結果',img1.width+14,img1.height-10);
-    const a=document.createElement('a');a.href=cv.toDataURL('image/png');a.download='界象_BA_'+r.name.replace(/\.[^.]+$/,'')+'.png';a.click();toast('已下載 BA 對比圖','success');};img2.src=r.result;};img1.src=r.orig;
+    img1.onload=()=>{img2.onload=()=>{cv.width=img1.width*2+4;cv.height=img1.height;const cx=cv.getContext('2d');cx.drawImage(img1,0,0);cx.fillStyle='#fff';cx.fillRect(img1.width,0,4,cv.height);cx.drawImage(img2,img1.width+4,0,img1.width,img1.height);cx.fillStyle='rgba(0,0,0,0.5)';cx.font='bold 16px Inter';cx.fillText('åå',10,img1.height-10);cx.fillText('AI çµæ',img1.width+14,img1.height-10);
+    const a=document.createElement('a');a.href=cv.toDataURL('image/png');a.download='çè±¡_BA_'+r.name.replace(/\.[^.]+$/,'')+'.png';a.click();toast('å·²ä¸è¼ BA å°æ¯å','success');};img2.src=r.result;};img1.src=r.orig;
   }
 }
-function dlAll(){if(!window._res)return;window._res.forEach((r,i)=>{setTimeout(()=>{const a=document.createElement('a');a.href=r.result;a.download='界象_AI_'+r.name.replace(/\.[^.]+$/,'')+'.png';a.click();},i*400);});toast('下載全部','success');}
+function dlAll(){if(!window._res)return;window._res.forEach((r,i)=>{setTimeout(()=>{const a=document.createElement('a');a.href=r.result;a.download='çè±¡_AI_'+r.name.replace(/\.[^.]+$/,'')+'.png';a.click();},i*400);});toast('ä¸è¼å¨é¨','success');}
 
 // REFINE
 let refTool='point';
 function openRef(idx){
   const r=window._res[idx];refSt={tasks:[],imgSrc:r.result,idx};refTool='point';
   document.getElementById('refImg').src=r.result;
-  document.getElementById('refTasks').innerHTML='<p style="font-size:.72rem;color:var(--text3)">點擊或塗抹要微調的位置</p>';
+  document.getElementById('refTasks').innerHTML='<p style="font-size:.72rem;color:var(--text3)">é»ææå¡æ¹è¦å¾®èª¿çä½ç½®</p>';
   document.getElementById('refIA').querySelectorAll('.pin').forEach(p=>p.remove());
   const cv=document.getElementById('refCanvas');cv.style.display='none';
   document.getElementById('refBsz').style.display='none';
@@ -560,12 +598,12 @@ function setRefTool(t,btn){refTool=t;document.getElementById('refTool').querySel
 
 function rrPins(){const a=document.getElementById('refIA');a.querySelectorAll('.pin').forEach(p=>p.remove());refSt.tasks.forEach((t,ti)=>{const p=document.createElement('div');p.className='pin '+t.mode;p.style.left=t.x+'%';p.style.top=t.y+'%';p.textContent=ti+1;p.onclick=e=>e.stopPropagation();a.appendChild(p);});}
 
-function rrTasks(){const el=document.getElementById('refTasks');if(!refSt.tasks.length){el.innerHTML='<p style="font-size:.72rem;color:var(--text3)">點擊或塗抹要微調的位置</p>';return;}
-  el.innerHTML=refSt.tasks.map((t,ti)=>`<div class="task" style="margin-bottom:5px;"><div class="task-hdr"><div class="task-badge"><span class="task-n ${t.mode}">${ti+1}</span><span class="task-title">微調 ${ti+1}</span></div><button class="task-x" onclick="refSt.tasks.splice(${ti},1);rrPins();rrTasks();">✕</button></div><div class="seg"><button class="seg-o ${t.mode==='remove'?'sr':''}" onclick="refSt.tasks[${ti}].mode='remove';rrPins();rrTasks();">清除</button><button class="seg-o ${t.mode==='replace'?'sg':''}" onclick="refSt.tasks[${ti}].mode='replace';rrPins();rrTasks();">更換</button><button class="seg-o ${t.mode==='blank'?'sb':''}" onclick="refSt.tasks[${ti}].mode='blank';rrPins();rrTasks();">留白</button></div>${t.mode==='replace'?`<input class="rep-in" type="text" placeholder="要換成什麼？" value="${t.replaceText||''}" oninput="refSt.tasks[${ti}].replaceText=this.value" style="margin-top:3px;">`:''}</div>`).join('');}
+function rrTasks(){const el=document.getElementById('refTasks');if(!refSt.tasks.length){el.innerHTML='<p style="font-size:.72rem;color:var(--text3)">é»ææå¡æ¹è¦å¾®èª¿çä½ç½®</p>';return;}
+  el.innerHTML=refSt.tasks.map((t,ti)=>`<div class="task" style="margin-bottom:5px;"><div class="task-hdr"><div class="task-badge"><span class="task-n ${t.mode}">${ti+1}</span><span class="task-title">å¾®èª¿ ${ti+1}</span></div><button class="task-x" onclick="refSt.tasks.splice(${ti},1);rrPins();rrTasks();">â</button></div><div class="seg"><button class="seg-o ${t.mode==='remove'?'sr':''}" onclick="refSt.tasks[${ti}].mode='remove';rrPins();rrTasks();">æ¸é¤</button><button class="seg-o ${t.mode==='replace'?'sg':''}" onclick="refSt.tasks[${ti}].mode='replace';rrPins();rrTasks();">æ´æ</button><button class="seg-o ${t.mode==='blank'?'sb':''}" onclick="refSt.tasks[${ti}].mode='blank';rrPins();rrTasks();">çç½</button></div>${t.mode==='replace'?`<input class="rep-in" type="text" placeholder="è¦ææä»éº¼ï¼" value="${t.replaceText||''}" oninput="refSt.tasks[${ti}].replaceText=this.value" style="margin-top:3px;">`:''}</div>`).join('');}
 
 async function refGen(){
-  if(!refSt.tasks.length){toast('請先標記要微調的位置','error');return;}
-  const btn=document.getElementById('refGenBtn');btn.disabled=true;btn.innerHTML='<span class="spinner"></span>生成中…';
+  if(!refSt.tasks.length){toast('è«åæ¨è¨è¦å¾®èª¿çä½ç½®','error');return;}
+  const btn=document.getElementById('refGenBtn');btn.disabled=true;btn.innerHTML='<span class="spinner"></span>çæä¸­â¦';
   const rp=document.getElementById('refProg'),rpb=document.getElementById('refPb');rp.classList.add('on');rpb.style.width='30%';
   try{
     const fake={dataUrl:refSt.imgSrc,tasks:refSt.tasks,file:{name:'refine'}};
@@ -573,9 +611,9 @@ async function refGen(){
     const url=await callAPI(fake,true);
     rpb.style.width='100%';
     window._res[refSt.idx].result=url;
-    showRes(window._res);closeRef();toast('微調完成','success');
-  }catch(e){toast('微調失敗','error');}
-  btn.disabled=false;btn.innerHTML='重新生成';setTimeout(()=>{rp.classList.remove('on');rpb.style.width='0%';},1000);
+    showRes(window._res);closeRef();toast('å¾®èª¿å®æ','success');
+  }catch(e){toast('å¾®èª¿å¤±æ','error');}
+  btn.disabled=false;btn.innerHTML='éæ°çæ';setTimeout(()=>{rp.classList.remove('on');rpb.style.width='0%';},1000);
 }
 
 // UTILS
@@ -583,7 +621,7 @@ function showModal(src){document.getElementById('modalImg').src=src;document.get
 function updS(f){const h=photos.length>0,ha=photos.some(p=>p.tasks.length>0);document.getElementById('s1').className='stp'+(h?' done':' act');document.getElementById('s2').className='stp'+(ha?' done':(h?' act':''));document.getElementById('s3').className='stp'+(f===3?' done':(ha?' act':''));}
 function toast(m,t){const el=document.getElementById('toast');el.textContent=m;el.className='toast '+t+' show';setTimeout(()=>el.classList.remove('show'),3200);}
 function log(m,t){const c=document.getElementById('logC'),d=document.createElement('div');d.className='log-l'+(t?' '+t:'');d.textContent=`[${new Date().toLocaleTimeString()}] ${m}`;c.appendChild(d);c.scrollTop=c.scrollHeight;}
-function resetAll(){if(photos.length&&!confirm('確定清除全部？'))return;photos=[];renderAll();document.getElementById('resSec').style.display='none';toast('已重置','info');}
+function resetAll(){if(photos.length&&!confirm('ç¢ºå®æ¸é¤å¨é¨ï¼'))return;photos=[];renderAll();document.getElementById('resSec').style.display='none';toast('å·²éç½®','info');}
 document.addEventListener('click',e=>{const sp=document.getElementById('setP');if(sp.classList.contains('on')&&!sp.contains(e.target)&&!e.target.classList.contains('set-btn'))sp.classList.remove('on');});
 </script>
 </body>
